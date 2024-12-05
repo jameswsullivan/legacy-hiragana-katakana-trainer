@@ -123,6 +123,18 @@ public class japaneseSyllabary extends JFrame{
 		startRunnable();
 		enableAllFields();
 		initDisableFields();
+
+		// Add a window listener to ensure proper shutdown
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				// Stop the flashCard thread if it's running
+				if (flashCard != null && flashCard.isAlive()) {
+					flashCard.interrupt(); // Interrupt the thread
+				}
+				System.exit(0); // Ensure JVM exits completely
+			}
+		});
 	}
 	//End of Constructor.
 	
@@ -425,7 +437,15 @@ public class japaneseSyllabary extends JFrame{
 		fileMenu.add(viewAllMenuItem);
 		
 		exitMenuItem = new JMenuItem("Exit");
-		exitMenuItem.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent e) { System.exit(0); } });
+		exitMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Stop the flashCard thread if it's running
+				if (flashCard != null && flashCard.isAlive()) {
+					flashCard.interrupt(); // Interrupt the thread
+				}
+				System.exit(0); // Ensure JVM exits completely
+			}
+		});
 		exitMenuItem.setFont(new Font("Arial", Font.PLAIN, 18));
 		fileMenu.add(exitMenuItem);
 		//End of File Menu
@@ -770,30 +790,24 @@ public class japaneseSyllabary extends JFrame{
 		paused = new AtomicBoolean(true);
 		Runnable runnable = new Runnable() {
 			public void run() {
-				while (true)
-				{
-					if (paused.get() == true)
-					{
-						synchronized(flashCard)
-						{
-							try {
+				try {
+					while (!Thread.currentThread().isInterrupted()) { // Check for interruptions
+						if (paused.get()) {
+							synchronized (flashCard) {
 								flashCard.wait();
-							} catch (InterruptedException e) {
-								e.printStackTrace();
 							}
 						}
+						if (randomCheckbox.isSelected()) {
+							showSyllable(random.nextInt(to - from + 1) + from);
+						} else {
+							showSyllable(flashcardIndex);
+							flashcardIndex = (flashcardIndex == to) ? from : flashcardIndex + 1;
+						}
+						Thread.sleep(delay);
 					}
-					if (randomCheckbox.isSelected())
-					{
-						showSyllable(random.nextInt(to - from + 1) + from);
-						try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
-					}
-					else
-					{
-						showSyllable(flashcardIndex);
-						if (flashcardIndex == to) flashcardIndex = from; else flashcardIndex++;
-						try { Thread.sleep(delay); } catch (InterruptedException e) { e.printStackTrace(); }
-					}
+				} catch (InterruptedException e) {
+					// Gracefully exit thread
+					Thread.currentThread().interrupt();
 				}
 			}
 		};
@@ -1004,16 +1018,13 @@ public class japaneseSyllabary extends JFrame{
 		}
 	}
 	
-	public void playPronounciation(String s)
-	{
-		  try
-		  {
-			  FileInputStream soundSource = new FileInputStream(s);
-			  Player player = new Player(soundSource);
-			  player.play();
-			  player.close();
-			  
-		  }catch(Exception e) { System.out.println(e); }
+	public void playPronounciation(String s) {
+		try (FileInputStream soundSource = new FileInputStream(s)) {
+			Player player = new Player(soundSource);
+			player.play();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 	
 	public void showMsg(String s)
