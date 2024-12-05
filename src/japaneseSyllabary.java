@@ -53,8 +53,8 @@ public class japaneseSyllabary extends JFrame{
 	private Thread flashCard;
 	private int from, to, delay, nextOne, randomTemp, flashcardIndex;
 	private boolean showHide;
-	private final String rangeWarn = "Values of \"FROM\" and \"TO\" should be between 1 and " + res.syllabary.length + ". And \"FROM\" shoud be LESS THAN \"To\".";
-	private final String emptyWarn = "Please fill in the proper fields.";
+	private final String rangeWarn = "\"From\" and \"To\" should be between 1 and " + res.syllabary.length + ", \"From\" shoud be less than \"To\".";
+	private final String emptyWarn = "\"From\" and \"To\" can't be empty. Please try again.";
 	Border border = BorderFactory.createLineBorder(Color.GRAY, 2);
 	//End of Declaration of Resources.
 	
@@ -133,7 +133,7 @@ public class japaneseSyllabary extends JFrame{
 		fromFocusAction = new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				fromField.setText("");
-				setButton.setText("Set to Begin");
+				setButton.setText("Start");
 				rangeFieldFocusEnableDisableFields();
 			}
 			public void focusLost(FocusEvent e) {}
