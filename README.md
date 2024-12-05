@@ -1,17 +1,17 @@
 ## Hiragana and Katakana Trainer
 
-#### Screenshot
+### Screenshot
 
 ![](https://github.com/jameswsullivan/legacy-hiragana-katakana-trainer/blob/main/screenshot.PNG)
 
 
-#### Use
-- Download the zipped package `Japanese.Hiragana.and.Katakana.Trainer.7z` from the v1.0.1 release, extract all the files and run the `JapaneseSyllabaryTrainer.jar`.
-- The `voice` directory needs to be placed within the same directory as the `jar` file.
+### Use
+- Clone the repo and run the `JapaneseSyllabaryTrainer.jar`.
+- The `voice` directory needs to remain within the same directory as the `jar` file.
 - The `settings.ini` file is optional, and will be created by the app if absent.
 
 
-#### Build
+### Build
 
 ```
 # Ensure Java 7 or 8 is installed.
@@ -28,7 +28,7 @@ jar cmf MANIFEST.MF JapaneseSyllabaryTrainer.jar -C bin .
 ```
 
 
-#### The Story
+### The Story
 Around 2014 ~ 2015, a few of my friends were learning Japanese and were preparing for the JLPT N1, N2 exams. At the time the language learning apps such as Duolingo were not as popular and advanced as they are today and they needed something that would exclusively focus on the
 Hiragana and Katakana training and be able to run on desktop computers.
 We tried a few interactive learning tools like Rosetta Stone, however, they were either "too powerful" that exceeded the needs or lacked certain features we wanted.
